@@ -17,15 +17,15 @@ const NewPlace = () => {
         {
             title: {
                 value: '',
-                isValid: '',
+                isValid: true,
             },
             description: {
                 value: '',
-                isValid: '',
+                isValid: true,
             },
             address: {
                 value: '',
-                isValid: '',
+                isValid: true,
             },
         }, 
         false
