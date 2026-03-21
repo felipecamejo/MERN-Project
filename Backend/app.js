@@ -4,6 +4,10 @@ const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
 
 const placesRoutes = require('./routes/places-routes');
+const usersRoutes = require('./routes/users-routes');
+
+
+const HttpError = require('./models/http-error');
 
 const app = express();
 
@@ -30,6 +34,11 @@ const swaggerSpec = swaggerJsdoc(swaggerOptions);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use('/api/places', placesRoutes);
+app.use('/api/users', usersRoutes);
+
+app.use((req, res, next) => {
+  throw new HttpError('Could not finde this route.', 404);
+});
 
 app.use((error, req, res, next) => {
   if (res.headerSent) {
