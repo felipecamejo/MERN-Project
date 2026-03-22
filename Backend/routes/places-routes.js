@@ -1,5 +1,7 @@
 const express = require('express');
 
+const {check} = require('express-validator');
+
 const placesControllers = require('../controllers/places-controller');
 
 const router = express.Router();
@@ -87,7 +89,12 @@ router.get('/user/:uid', placesControllers.getPlacesByUserId);
  *       404:
  *         description: No se encontro el lugar por id
  */
-router.patch('/:pid', placesControllers.updatePlaceById);
+router.patch('/:pid',
+  [
+    check('title').notEmpty(),
+    check('description').isLength({min: 5}),
+  ],
+  placesControllers.updatePlaceById);
 
 
 /**
@@ -131,13 +138,6 @@ router.delete('/:pid', placesControllers.deletePlaceById);
  *                 type: string
  *               description:
  *                 type: string
- *               coordinates:
- *                 type: object
- *                 properties:
- *                   lat:
- *                     type: number
- *                   lng:
- *                     type: number
  *               address:
  *                 type: string
  *               creator:
@@ -148,6 +148,12 @@ router.delete('/:pid', placesControllers.deletePlaceById);
  *       400:
  *         description: Datos inválidos
  */
-router.post('/', placesControllers.createPlace);
+router.post('/', 
+  [
+    check('title').notEmpty(),
+    check('description').isLength({min: 5}),
+    check('address').notEmpty()
+  ],
+  placesControllers.createPlace);
 
 module.exports = router;

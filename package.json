@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "node-fetch": "^2.7.0",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1"
   }

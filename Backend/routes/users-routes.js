@@ -1,9 +1,10 @@
 const express = require('express');
 
+const {check} = require('express-validator');
+
 const usersControllers = require('./../controllers/users-controller');
 
 const router = express.Router();
-
 
 /**
  * @swagger
@@ -48,7 +49,13 @@ router.get('/', usersControllers.getUsers);
  *       400:
  *         description: Datos inválidos
  */
-router.post('/singup', usersControllers.singup);
+router.post('/singup', 
+  [
+    check('name').notEmpty(),
+    check('email').normalizeEmail().isEmail(),
+    check('password').isLength({min: 6}),
+  ],
+  usersControllers.singup);
 
 /**
  * @swagger
@@ -74,7 +81,12 @@ router.post('/singup', usersControllers.singup);
  *       401:
  *         description: Credenciales inválidas
  */
-router.post('/login', usersControllers.login);
+router.post('/login', 
+  [
+    check('email').normalizeEmail().isEmail(),
+    check('password').isLength({min: 6}),
+  ],
+  usersControllers.login);
 
 
 
