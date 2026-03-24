@@ -3,6 +3,8 @@ const bodyParser = require('body-parser');
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsdoc = require('swagger-jsdoc');
 
+const mongoose = require('mongoose');
+
 const placesRoutes = require('./routes/places-routes');
 const usersRoutes = require('./routes/users-routes');
 
@@ -49,4 +51,15 @@ app.use((error, req, res, next) => {
   res.json({message: error.message || 'An unknown error occurred!'});
 });
 
-app.listen(5000);
+const password = 'Holasoyelpjiji12314141';
+const url = 'mongodb+srv://Felipe:'+ password +'@cluster0.ehja6nw.mongodb.net/?appName=Cluster0'
+
+mongoose
+  .connect(url)
+  .then(() => {
+    app.listen(5000);
+  })
+  .catch(err => {
+    console.log(err);
+  });
+
