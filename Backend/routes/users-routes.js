@@ -43,8 +43,6 @@ router.get('/', usersControllers.getUsers);
  *                 type: string
  *               password:
  *                 type: string
- *               places:
- *                 type: string
  *     responses:
  *       201:
  *         description: Usuario registrado
