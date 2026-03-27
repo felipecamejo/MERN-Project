@@ -123,7 +123,7 @@ const createPlace = async (req, res, next) => {
     return next(error);
   }
 
-  res.status(201).json({place: createPlace});
+  res.status(201).json({place: createPlace.toObject({getters: true})});
 };
 
 const updatePlaceById = async (req, res, next) => {
