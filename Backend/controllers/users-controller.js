@@ -1,8 +1,12 @@
 const HttpError = require('./../models/http-error');
+const mongoose = require('mongoose');
+const fs = require('fs');
 
 const User = require('../models/user');
+const Place = require('../models/place');
 
 const { validationResult } = require('express-validator');
+const place = require('../models/place');
 
 const getUsers = async(req, res, next) => {
   let users;
@@ -19,13 +23,13 @@ const getUsers = async(req, res, next) => {
 
 const singup = async (req, res, next) => {
   const errors = validationResult(req);
-
   if (!errors.isEmpty()){
     console.log(errors);
     return next(
       new HttpError('Invalid inputs passed, please check your data.',422)
     );
   }
+
   const {name, email, password} = req.body;
 
   let existingUser
@@ -45,7 +49,7 @@ const singup = async (req, res, next) => {
   const createdUser = new User({
     name,
     email,
-    image: 'https://static-cdn.jtvnw.net/jtv_user_pictures/9187e6b7-1297-4913-bfd3-9f2e415f7eec-profile_image-300x300.png',
+    image: req.file.path,
     password,
     places: []
   });
@@ -85,6 +89,47 @@ const login = async (req, res, next) => {
 
 };
 
+const deleteUserById = async (req, res, next) => {
+    const userId = req.params.uid;
+  
+    let user;
+    try {
+      user = await User.findById(userId);
+    } catch (err) {
+      console.log(err);
+      const error = new HttpError('Something went wrong, could not find user for deletion', 500);
+      return next(error);
+    }
+  
+    if (!user) {
+      const error = new HttpError('Could not find user for this id.', 404);
+      return next(error);
+    }
+     
+    const imagePath = user.image;
+  
+    try {
+      const sess = await mongoose.startSession();
+      sess.startTransaction();
+  
+      await Place.deleteMany({creator: userId});
+      
+      await User.findByIdAndDelete(userId, { session: sess });
+      await sess.commitTransaction();
+    } catch (err) {
+      console.log(err);
+      const error = new HttpError('Something went wrong, could not delete user', 500);
+      return next(error);
+    }
+  
+    fs.unlink(imagePath, err => {
+      console.log(err);
+    });
+  
+    res.status(200).json({message: 'Deleted user. Id:' + userId});
+};
+
+exports.deleteUserById = deleteUserById;
 exports.getUsers = getUsers;
 exports.singup = singup;
 exports.login = login;

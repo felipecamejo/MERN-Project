@@ -10,6 +10,8 @@ import ErrorModal from '../../shared/components/UIElements/ErrorModal';
 import LoadingSpinner from '../../shared/components/UIElements/LoadingSpinner';
 
 
+import ImageUpload from '../../shared/components/FormElements/ImageUpload';
+
 import { useHttpClient } from '../../shared/hooks/http-hook';
 
 import { AuthContext } from '../../shared/context/auth-context-';
@@ -41,7 +43,8 @@ const Auth = () => {
     if (!isLogin) {
       setFormData({
           ...formState.inputs,
-          name: undefined
+          name: undefined,
+          image:undefined,
         },
         formState.inputs.email.isValid && formState.inputs.password.isValid
       );
@@ -51,6 +54,10 @@ const Auth = () => {
         name: {
           value: '',
           isValid: false
+        },
+        image: {
+          value: null,
+          isValid: false,
         }
       }, false);
     }
@@ -60,10 +67,8 @@ const Auth = () => {
 
   const authSubmitHandler = async event => {
     event.preventDefault();
- 
 
     if (isLogin) {
-
       try {
         const responseData = await sendRequest(
           'http://localhost:5000/api/users/login', 
@@ -82,18 +87,15 @@ const Auth = () => {
     } else {
 
       try {
+        const formData = new FormData();
+        formData.append('name',  formState.inputs.name.value);
+        formData.append('email',  formState.inputs.email.value);
+        formData.append('password',  formState.inputs.password.value);
+        formData.append('image', formState.inputs.image.value);
         const responseData = await sendRequest(
-          'http://localhost:5000/api/users/singup', 
+          'http://localhost:5000/api/users/signup', 
           'POST',
-            
-          JSON.stringify({
-            name: formState.inputs.name.value,
-            email: formState.inputs.email.value,
-            password: formState.inputs.password.value,
-          }),
-          {
-            'Content-Type': 'application/json'
-          }
+          formData,
         );
         auth.login(responseData.user.id);
       } catch(err){}
@@ -107,21 +109,32 @@ const Auth = () => {
       <ErrorModal error={error} onClear={clearError}/>
       <Card className="authentication">
         {isLoading && <LoadingSpinner asOverlay/>}
-        <h2>{isLogin ? 'Login' : 'Register'} Required</h2>
+        <h2>{isLogin ? 'Login' : 'Sign Up'} Required</h2>
         <hr/>
         <form  
           onSubmit={authSubmitHandler} 
         >
-          {!isLogin && <Input
-            id="name" 
-            element="input" 
-            type="text" 
-            label="Name" 
-            validators={[VALIDATOR_REQUIRE()]} 
-            errorText="Please enter a name."
-            onInput={inputHandler}
-          />
+          {!isLogin && (
+            <Input
+              id="name" 
+              element="input" 
+              type="text" 
+              label="Name" 
+              validators={[VALIDATOR_REQUIRE()]} 
+              errorText="Please enter a name."
+              onInput={inputHandler}
+            />
+            )
           }
+
+          {!isLogin && (
+            <ImageUpload 
+              center 
+              id="image" 
+              onInput={inputHandler} 
+              errorText="Please provide an image."
+            />
+          )}
 
           <Input
             id="email" 

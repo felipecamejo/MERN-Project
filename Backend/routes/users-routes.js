@@ -4,6 +4,8 @@ const {check} = require('express-validator');
 
 const usersControllers = require('./../controllers/users-controller');
 
+const fileUpload = require('../middleware/file-upload');
+
 const router = express.Router();
 
 /**
@@ -21,6 +23,31 @@ const router = express.Router();
  *         description: Users encontrados
  */
 router.get('/', usersControllers.getUsers);
+
+/**
+ * @swagger
+ * /api/users/{uid}:
+ *   delete:
+ *     tags:
+ *       - users
+ *     summary: Borra un usuario y todos sus places
+ *     parameters:
+ *       - in: path
+ *         name: uid
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID del usuario a eliminar
+ *     responses:
+ *       200:
+ *         description: Usuario eliminado correctamente
+ *       404:
+ *         description: Usuario no encontrado
+ *       500:
+ *         description: Error del servidor
+ */
+router.delete('/:uid', usersControllers.deleteUserById);
+
 
 
 /**
@@ -49,7 +76,8 @@ router.get('/', usersControllers.getUsers);
  *       400:
  *         description: Datos inválidos
  */
-router.post('/singup', 
+router.post('/signup', 
+  fileUpload.single('image'),
   [
     check('name').notEmpty(),
     check('email').normalizeEmail().isEmail(),

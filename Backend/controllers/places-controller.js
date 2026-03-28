@@ -1,5 +1,7 @@
 const { v4: uuidv4 } = require('uuid');
 
+const fs = require('fs');
+
 const { validationResult } = require('express-validator');
 
 const HttpError = require('./../models/http-error');
@@ -81,7 +83,7 @@ const createPlace = async (req, res, next) => {
     description,
     address,
     location: coordinates,
-    image: 'https://media.istockphoto.com/id/486334510/es/foto/edificios-de-la-ciudad-de-nueva-york.jpg?s=612x612&w=0&k=20&c=N_x_BnbJXBufDcVVCz1s1A26Q84isBpbozbb9yXS9Us=',
+    image: req.file.path,
     creator,
   })
 
@@ -178,7 +180,9 @@ const deletePlaceById = async (req, res, next) => {
     const error = new HttpError('Could not find place for this id.', 404);
     return next(error);
   }
-    
+   
+  const imagePath = place.image;
+
   try {
     const sess = await mongoose.startSession();
     sess.startTransaction();
@@ -191,6 +195,10 @@ const deletePlaceById = async (req, res, next) => {
     const error = new HttpError('Something went wrong, could not delete place', 500);
     return next(error);
   }
+
+  fs.unlink(imagePath, err => {
+    console.log(err);
+  });
 
   res.status(200).json({message: 'Deleted place. Id:' + placeId})
 };

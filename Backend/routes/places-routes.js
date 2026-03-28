@@ -6,6 +6,8 @@ const placesControllers = require('../controllers/places-controller');
 
 const router = express.Router();
 
+const fileUpload = require('../middleware/file-upload');
+
 /**
  * @swagger
  * tags:
@@ -149,6 +151,7 @@ router.delete('/:pid', placesControllers.deletePlaceById);
  *         description: Datos inválidos
  */
 router.post('/', 
+  fileUpload.single('image'),
   [
     check('title').notEmpty(),
     check('description').isLength({min: 5}),
