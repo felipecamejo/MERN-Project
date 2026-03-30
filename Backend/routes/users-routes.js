@@ -52,7 +52,7 @@ router.delete('/:uid', usersControllers.deleteUserById);
 
 /**
  * @swagger
- * /api/users/singup:
+ * /api/users/signup:
  *   post:
  *     tags:
  *       - users
@@ -70,6 +70,10 @@ router.delete('/:uid', usersControllers.deleteUserById);
  *                 type: string
  *               password:
  *                 type: string
+ *               image:
+ *                 type: string
+ *                 format: binary
+ *                 description: Imagen de perfil del usuario
  *     responses:
  *       201:
  *         description: Usuario registrado

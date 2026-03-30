@@ -7,6 +7,7 @@ const placesControllers = require('../controllers/places-controller');
 const router = express.Router();
 
 const fileUpload = require('../middleware/file-upload');
+const checkAuth = require('../middleware/auth');
 
 /**
  * @swagger
@@ -54,6 +55,8 @@ router.get('/:pid', placesControllers.getPlaceById)
  *         description: No se encontraron lugares para el usuario
  */
 router.get('/user/:uid', placesControllers.getPlacesByUserId);
+
+router.use(checkAuth);
 
 /**
  * @swagger
