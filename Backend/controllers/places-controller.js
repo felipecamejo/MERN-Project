@@ -69,7 +69,8 @@ const createPlace = async (req, res, next) => {
     return next(new HttpError('Invalid inputs passed, please check your data.',422));
   }
 
-  const {title, description, address, creator} = req.body;
+  const {title, description, address} = req.body;
+  const creator = req.userData.userId;
 
   let coordinates;
   try {
@@ -148,10 +149,10 @@ const updatePlaceById = async (req, res, next) => {
     return next(error);
   }
 
-  if (place.creator !== req.userData.userId) {
+  if (place.creator.toString() !== req.userData.userId) {
     const error = new HttpError(
         'You are not allowed to edit this place.', 
-        401
+        403
     );
     return next(error);
   }
