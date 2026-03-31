@@ -190,11 +190,6 @@ const deletePlaceById = async (req, res, next) => {
     return next(error);
   }
   
-  // DEBUG: Log para verificar la comparación
-  console.log('Place creator:', place.creator);
-  console.log('User ID:', req.userData.userId);
-  console.log('Are they equal?', place.creator.toString() === req.userData.userId);
-
   if (place.creator.toString() !== req.userData.userId) {
     const error = new HttpError(
         'You are not allowed to delete this place.', 
