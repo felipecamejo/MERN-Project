@@ -65,6 +65,8 @@ router.use(checkAuth);
  *     tags:
  *       - places
  *     summary: Actualizar un place por id
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: pid
@@ -91,6 +93,8 @@ router.use(checkAuth);
  *     responses:
  *       200:
  *         description: Actualizado correctamente
+ *       401:
+ *         description: No autorizado - Token requerido o inválido
  *       404:
  *         description: No se encontro el lugar por id
  */
@@ -109,6 +113,8 @@ router.patch('/:pid',
  *     tags:
  *       - places
  *     summary: Elimina un place por id
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: pid
@@ -119,6 +125,8 @@ router.patch('/:pid',
  *     responses:
  *       200:
  *         description: Eliminado correctamente
+ *       401:
+ *         description: No autorizado - Token requerido o inválido
  *       404:
  *         description: No se encontro el lugar por id
  */
@@ -132,26 +140,42 @@ router.delete('/:pid', placesControllers.deletePlaceById);
  *     tags:
  *       - places
  *     summary: Crear un nuevo lugar
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             type: object
+ *             required:
+ *               - title
+ *               - description
+ *               - address
+ *               - image
  *             properties:
  *               title:
  *                 type: string
+ *                 description: Título del lugar
  *               description:
  *                 type: string
+ *                 description: Descripción del lugar
  *               address:
  *                 type: string
- *               creator:
+ *                 description: Dirección del lugar
+ *               image:
  *                 type: string
+ *                 format: binary
+ *                 description: Imagen del lugar
  *     responses:
  *       201:
  *         description: Lugar creado
  *       400:
  *         description: Datos inválidos
+ *       401:
+ *         description: No autorizado - Token requerido o inválido
+ *       422:
+ *         description: Validación fallida en los datos
  */
 router.post('/', 
   fileUpload.single('image'),

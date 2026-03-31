@@ -60,25 +60,46 @@ router.delete('/:uid', usersControllers.deleteUserById);
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             type: object
+ *             required:
+ *               - name
+ *               - email
+ *               - password
+ *               - image
  *             properties:
  *               name:
  *                 type: string
+ *                 description: Nombre del usuario
  *               email:
  *                 type: string
+ *                 description: Email del usuario
  *               password:
  *                 type: string
+ *                 description: Contraseña (mínimo 6 caracteres)
  *               image:
  *                 type: string
  *                 format: binary
  *                 description: Imagen de perfil del usuario
  *     responses:
  *       201:
- *         description: Usuario registrado
+ *         description: Usuario registrado exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 userId:
+ *                   type: string
+ *                   description: ID del usuario creado
+ *                 token:
+ *                   type: string
+ *                   description: JWT token para autenticación
  *       400:
- *         description: Datos inválidos
+ *         description: Datos inválidos o email ya existe
+ *       422:
+ *         description: Validación fallida en los datos
  */
 router.post('/signup', 
   fileUpload.single('image'),
@@ -102,16 +123,34 @@ router.post('/signup',
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - email
+ *               - password
  *             properties:
  *               email:
  *                 type: string
+ *                 description: Email del usuario
  *               password:
  *                 type: string
+ *                 description: Contraseña del usuario
  *     responses:
  *       200:
  *         description: Login exitoso
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 userId:
+ *                   type: string
+ *                   description: ID del usuario
+ *                 token:
+ *                   type: string
+ *                   description: JWT token para autenticación (usar en header Authorization)
  *       401:
  *         description: Credenciales inválidas
+ *       422:
+ *         description: Validación fallida en los datos
  */
 router.post('/login', 
   [
