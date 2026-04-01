@@ -70,7 +70,6 @@ const createPlace = async (req, res, next) => {
   }
 
   const {title, description, address} = req.body;
-  const creator = req.userData.userId;
 
   let coordinates;
   try {
@@ -85,18 +84,18 @@ const createPlace = async (req, res, next) => {
     address,
     location: coordinates,
     image: req.file.path,
-    creator,
+    creator: req.userData.userId,
   })
 
   let user;
 
-  if (!mongoose.Types.ObjectId.isValid(creator)) {
+  if (!mongoose.Types.ObjectId.isValid(req.userData.userId)) {
     const error = new HttpError('Could not find user for the provided id.', 404);
     return next(error);
   }
 
   try {
-    user = await User.findById(creator);
+    user = await User.findById(req.userData.userId);
   } catch (err) {
     const error = new HttpError('Creating place failed, please try again', 500);
     return next(error);
