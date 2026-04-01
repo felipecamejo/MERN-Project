@@ -89,8 +89,7 @@ app.use((error, req, res, next) => {
   res.json({message: error.message || 'An unknown error occurred!'});
 });
 
-const password = 'Holasoyelpjiji12314141';
-const url = 'mongodb+srv://Felipe:'+ password +'@cluster0.ehja6nw.mongodb.net/?appName=Cluster0'
+const url = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.ehja6nw.mongodb.net/?appName=${process.env.DB_NAME}`
 
 mongoose
   .connect(url)

@@ -10,8 +10,6 @@ const { validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
-const KEY = 'supersecret_dont_share';
-
 const getUsers = async(req, res, next) => {
   let users;
   try {
@@ -90,7 +88,7 @@ const singup = async (req, res, next) => {
     token = jwt.sign({
       userId: createdUser.id,
       email: createdUser.email,
-    }, KEY, 
+    }, process.env.JWT_KEY, 
     {expiresIn: '1h', }
   );    
   }catch(err){
@@ -145,7 +143,7 @@ const login = async (req, res, next) => {
     token = jwt.sign({
       userId: existingUser.id,
       email: existingUser.email,
-    }, KEY, 
+    }, process.env.JWT_KEY, 
     {expiresIn: '1h', }
   );    
   }catch(err){
